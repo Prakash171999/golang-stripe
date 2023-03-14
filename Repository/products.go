@@ -13,3 +13,10 @@ func GetAllProducts(products *[]Models.Products) (err error) {
 	}
 	return nil
 }
+
+func CreateProduct(product *Models.Products) (err error) {
+	if err = Config.DB.Create(product).Error; err != nil {
+		return err
+	}
+	return nil
+}

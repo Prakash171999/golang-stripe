@@ -12,7 +12,7 @@ func SetupRouter() *gin.Engine {
 	mido := r.Group("/products")
 	{
 		mido.GET("", Controllers.GetProducts)
-		// mido.POST("products", Controllers.CreateProducts)
+		mido.POST("", Controllers.CreateProducts)
 		// mido.GET("products/:id", Controllers.GetProductsByID)
 		// mido.PUT("products/:id", Controllers.UpdateProducts)
 		// mido.DELETE("products/:id", Controllers.DeleteProducts)

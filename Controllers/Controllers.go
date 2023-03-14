@@ -17,3 +17,14 @@ func GetProducts(c *gin.Context) {
 		c.JSON(http.StatusOK, products)
 	}
 }
+
+func CreateProducts(c *gin.Context) {
+	var product Models.Products
+	c.BindJSON(&product)
+	err := Repository.CreateProduct(&product)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, product)
+	}
+}
