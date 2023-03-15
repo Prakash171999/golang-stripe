@@ -20,3 +20,8 @@ func CreateProduct(product *Models.Products) (err error) {
 	}
 	return nil
 }
+
+func GetAProduct(product *Models.Products, id string) (Models.Products, error) {
+	err := Config.DB.Where("id = ?", id).First(product).Error
+	return *product, err
+}

@@ -7,6 +7,7 @@ import (
 	"os"
 	"proj-mido/stripe-gateway/Models"
 	"proj-mido/stripe-gateway/Repository"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -42,34 +43,35 @@ func Config(c *gin.Context) {
 		log.Fatal("Error loading .env file")
 	}
 
-	fmt.Println("FSDFDSDSFDSFDSF", os.Getenv("STRIPE_PUBLISHABLE_KEY"))
-
 	c.JSON(http.StatusOK, gin.H{
 		"publishableKey": os.Getenv("STRIPE_PUBLISHABLE_KEY"),
 	})
 }
 
 func HandleCreatePaymentIntent(c *gin.Context) {
+
+	var product Models.Products
+
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
-	type item struct {
-		id string
-	}
-
-	var req struct {
-		Items []item `json:"items"`
-	}
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		log.Printf("ShouldBindJSON: %v", err)
 		return
 	}
 
+	product_id := strconv.FormatUint(uint64(product.Id), 10)
+
+	data, err := Repository.GetAProduct(&product, product_id)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
+
+	fmt.Println("daaaaata==>", data)
+
 	// Create a PaymentIntent with amount and currency
 	params := &stripe.PaymentIntentParams{
-		// Amount:   stripe.Int64(calculateOrderAmount(req.Items)),
-		Amount:   stripe.Int64(1400),
+		Amount:   stripe.Int64(int64(data.Price)),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		AutomaticPaymentMethods: &stripe.PaymentIntentAutomaticPaymentMethodsParams{
 			Enabled: stripe.Bool(true),
