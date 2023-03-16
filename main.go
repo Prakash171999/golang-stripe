@@ -6,6 +6,7 @@ import (
 	"proj-mido/stripe-gateway/Models"
 	"proj-mido/stripe-gateway/Routes"
 
+	"github.com/gin-contrib/cors"
 	"github.com/jinzhu/gorm"
 )
 
@@ -21,5 +22,6 @@ func main() {
 	Config.DB.AutoMigrate(&Models.Products{})
 	r := Routes.SetupRouter()
 	//running
+	r.Use(cors.Default())
 	r.Run()
 }

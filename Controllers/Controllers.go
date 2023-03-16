@@ -21,7 +21,7 @@ func GetProducts(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, products)
+		c.JSON(http.StatusOK, gin.H{"products": products})
 	}
 }
 
